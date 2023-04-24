@@ -29,7 +29,6 @@ export class Logger {
       message: msg,
     }
     const socket = getSocketServerInstance()
-    console.log('Emitting logMessage')
     socket.emit('logMessage', logMessage)
   }
 }
