@@ -1,0 +1,15 @@
+{
+  "name": "atoler",
+  "private": true,
+  "workspaces": [
+    "*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel"
+  },
+  "author": "Daniel Guimarães Rocha",
+  "license": "ISC",
+  "devDependencies": {
+    "turbo": "^1.9.3"
+  }
+}

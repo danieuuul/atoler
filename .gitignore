@@ -1,0 +1,5 @@
+*/logs/*
+*/node_modules
+*/.env
+server/src/tasks/LAUDER/templates/*
+server/src/libs/api/siscrim.js
