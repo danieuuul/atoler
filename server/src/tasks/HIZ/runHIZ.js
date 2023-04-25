@@ -5,13 +5,13 @@ import { Logger } from '../../libs/Logger.js'
 import { zipAndIso } from './izip.js'
 import { calchashes } from './calchashes.js'
 
-export function runHIZ(folderPath, reportNumber) {
-  Logger.write('Starting HIZ')
+export async function runHIZ(folderPath, reportNumber) {
+  await Logger.write('Starting HIZ')
 
-  calchashes(folderPath, reportNumber)
-  zipAndIso(folderPath)
+  await calchashes(folderPath, reportNumber)
+  await zipAndIso(folderPath)
 
-  Logger.write('Finished HIZ')
+  await Logger.write('Finished HIZ')
 }
 
 const importMetaUrl = path.normalize(import.meta.url).replace('file:\\', '')

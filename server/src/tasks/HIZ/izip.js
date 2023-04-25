@@ -60,8 +60,8 @@ function buildListOfIso(numberOfFiles) {
   return listOfIso
 }
 
-export function zipAndIso(folderPath) {
-  Logger.write(`Start zipping`)
+export async function zipAndIso(folderPath) {
+  await Logger.write(`Start zipping`)
 
   const folderParentPath = path.dirname(folderPath)
 
@@ -72,7 +72,7 @@ export function zipAndIso(folderPath) {
 
   const zipCommand = `"${env.ZIP_PATH}" -v1448m a "${zipFileName}" "${folderPath}"`
 
-  Logger.write(`Zipping folder:\n ${zipCommand}`)
+  await Logger.write(`Zipping folder:\n ${zipCommand}`)
 
   execSync(zipCommand, { stdio: 'inherit', shell: true })
 
@@ -106,7 +106,7 @@ export function zipAndIso(folderPath) {
     }
 
     const imgBurnCommand = `"${imgBurnEXE}" /DEST "${isoName}" /src "${files}" ${imgBurnConfig}`
-    Logger.write(`Creating .iso files:\n ${imgBurnCommand}`)
+    await Logger.write(`Creating .iso files:\n ${imgBurnCommand}`)
 
     execSync(imgBurnCommand.trim(), { stdio: 'inherit', shell: true })
   }

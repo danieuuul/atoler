@@ -12,7 +12,7 @@ export async function downloadAsapAndBarCode(registerPath, reportNumber) {
   try {
     // LOGIN INTO SISCRIM AND SAVE COOKIE
     await loginSISCIM()
-    Logger.write('Logged in SISCRIM')
+    await Logger.write('Logged in SISCRIM')
 
     // GET THE REPORT CODE SO IT'LL BE POSSIBLE TO RETRIEVE OTHER DOCUMENTS FURTHER
     const reportCode = await getReportCodeByReportNumber(
@@ -27,13 +27,13 @@ export async function downloadAsapAndBarCode(registerPath, reportNumber) {
     // DOWNLOAD ASAP FILE
     const asapPath = path.join(registerPath, `Asap_${reportNumber}.asap`)
     await downloadAsapFile(reportCode, asapPath)
-    Logger.write(`Downloaded ${asapPath} file`)
+    await Logger.write(`Downloaded ${asapPath} file`)
 
     // DOWNLOAD BAR CODE FILE
     const barCodePath = path.join(registerPath, `bar_code_${reportNumber}.png`)
 
     await downloadBarCodeFile(reportCode, barCodePath)
-    Logger.write(`Downloaded ${barCodePath} bar code file`)
+    await Logger.write(`Downloaded ${barCodePath} bar code file`)
 
     return { asapPath, barCodePath }
   } catch (error) {

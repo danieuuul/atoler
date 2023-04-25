@@ -40,8 +40,8 @@ export class Atoler {
     return ports
   }
 
-  startDevicesImages() {
-    Logger.write('Starting images')
+  async startDevicesImages() {
+    await Logger.write('Starting images')
     this.evidences.forEach((evidence) => {
       startImage({
         source: evidence.port,
@@ -53,72 +53,65 @@ export class Atoler {
     })
   }
 
-  startWatch() {
+  async startWatch() {
     this.watcher = chokidar.watch(this.directoryToWatch, {
       ignored: /^\./,
     })
+    const startTime = Date.now() // get the current timestamp
 
-    Logger.write(`Start watching directory ${this.directoryToWatch}`)
+    await Logger.write(`Start watching directory ${this.directoryToWatch}`)
 
     this.watcher.on('all', async (event, path) => {
-      if (path.includes('Log.html')) {
-        const content = fs.readFileSync(path, { encoding: 'utf-8' })
-        // if (content.includes('Imaging completed')) {
-        if (content.includes('paused')) {
-          Logger.write(`File modificated: ${path}`)
-          const newE01fileFullpath = path.split('_E01')[0] + '.E01'
-          const newEvidence = this.getEvidenceByE01File(newE01fileFullpath)
+      if ((event = 'change' && path.includes('Log.html'))) {
+        const stats = fs.statSync(path)
+        const modifiedTimestamp = stats.mtimeMs
+        if (modifiedTimestamp > startTime) {
+          const content = fs.readFileSync(path, { encoding: 'utf-8' })
+          // if (content.includes('Imaging completed')) {
+          if (content.includes('paused')) {
+            await Logger.write(`File modificated: ${path}`)
+            const newE01fileFullpath = path.split('_E01')[0] + '.E01'
+            const newEvidence = this.getEvidenceByE01File(newE01fileFullpath)
 
-          await new Promise((resolve) => setTimeout(resolve, 1000))
+            await Logger.write(
+              `Processing image: ${newEvidence.e01Filename} - ${
+                this.countImagesProcessed + 1
+              } of ${this.evidences.length}`,
+            )
 
-          Logger.write(
-            `Processing image: ${newEvidence.e01Filename} - ${
-              this.countImagesProcessed + 1
-            } of ${this.evidences.length}`,
-          )
+            newEvidence.runIPED &&
+              (await runIPED({
+                e01FullPath: newEvidence.e01FullPath,
+                ipedOutputFolder: newEvidence.ipedOutputFolder,
+                ipedProfile: newEvidence.ipedProfile,
+                asapFullPath: newEvidence.asapFullPath,
+              }))
 
-          await new Promise((resolve) => setTimeout(resolve, 2000))
+            newEvidence.runLauder &&
+              (await runLauder({
+                registerPath: newEvidence.registerPath,
+                reportNumber: newEvidence.report,
+                template:
+                  templates[newEvidence.ipedProfile] || templates.default,
+              }))
 
-          newEvidence.runIPED &&
-            runIPED({
-              e01FullPath: newEvidence.e01FullPath,
-              ipedOutputFolder: newEvidence.ipedOutputFolder,
-              ipedProfile: newEvidence.ipedProfile,
-              asapFullPath: newEvidence.asapFullPath,
-            })
+            newEvidence.runHIZ &&
+              (await runHIZ(newEvidence.ipedOutputFolder, newEvidence.report))
 
-          await new Promise((resolve) => setTimeout(resolve, 2000))
-
-          newEvidence.runLauder &&
-            (await runLauder({
-              registerPath: newEvidence.registerPath,
-              reportNumber: newEvidence.report,
-              template: templates[newEvidence.ipedProfile] || templates.default,
-            }))
-
-          await new Promise((resolve) => setTimeout(resolve, 2000))
-
-          newEvidence.runHIZ &&
-            runHIZ(newEvidence.ipedOutputFolder, newEvidence.report)
-
-          await new Promise((resolve) => setTimeout(resolve, 1000))
-
-          Logger.write(
-            `Finished image processing: ${newEvidence.e01Filename} - ${
-              this.countImagesProcessed + 1
-            } of ${this.evidences.length}`,
-          )
-          this.countImagesProcessed++
+            await Logger.write(
+              `Finished image processing: ${newEvidence.e01Filename} - ${
+                this.countImagesProcessed + 1
+              } of ${this.evidences.length}`,
+            )
+            this.countImagesProcessed++
+          }
         }
       }
     })
   }
 
-  stopWatch() {
-    this.watcher
-      .close()
-      .then(() =>
-        Logger.write(`Stop watching directory ${this.directoryToWatch}`),
-      )
+  async stopWatch() {
+    await this.watcher.close()
+    await Logger.write(`Stop watching directory ${this.directoryToWatch}`)
   }
 }

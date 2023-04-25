@@ -9,6 +9,7 @@ import xmldom from 'xmldom'
 import { addRowsToTableOfMaterialsAndSeals } from './docx-utils/addRowsToTableOfMaterialsAndSeals.js'
 import { addParagraphWithMaterials } from './docx-utils/addParagraphWithMaterials.js'
 import { Logger } from '../../libs/Logger.js'
+import { execSync } from 'child_process'
 
 export async function createReportDocument({
   asapPath,
@@ -48,6 +49,15 @@ export async function createReportDocument({
   })
   const todayDate = dayjs().locale(ptBr).format('DD [de] MMMM [de] YYYY')
   asapDictionary.DATA_HOJE = todayDate
+
+  const whereIpedCommand = 'where iped'
+  const ipedVersion = `v${
+    execSync(whereIpedCommand)
+      .toString()
+      .match(/IPED-(.+)_plugin/)[1]
+  }`
+  asapDictionary.IPED_VERSAO = ipedVersion
+
   docx.setData(asapDictionary)
 
   const materials = []
@@ -81,8 +91,8 @@ export async function createReportDocument({
 
   try {
     fs.writeFileSync(pathToSave, output)
-    Logger.write(`Report ${pathToSave} created.`)
+    await Logger.write(`Report ${pathToSave} created.`)
   } catch (error) {
-    Logger.write(error)
+    await Logger.write(error)
   }
 }

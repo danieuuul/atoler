@@ -8,7 +8,7 @@ import { Logger } from '../../libs/Logger.js'
 import { templates } from './templates/index.js'
 
 export async function runLauder({ registerPath, reportNumber, template }) {
-  Logger.write('Starting Lauder')
+  await Logger.write('Starting Lauder')
 
   const { asapPath, barCodePath } = await downloadAsapAndBarCode(
     registerPath,
@@ -22,7 +22,7 @@ export async function runLauder({ registerPath, reportNumber, template }) {
     pathToSave,
     template,
   })
-  Logger.write('Finished Lauder')
+  await Logger.write('Finished Lauder')
 }
 
 const importMetaUrl = path.normalize(import.meta.url).replace('file:\\', '')

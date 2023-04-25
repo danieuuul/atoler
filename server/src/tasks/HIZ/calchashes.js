@@ -6,8 +6,8 @@ import { program } from 'commander'
 import { env } from '../../env/index.js'
 import { Logger } from '../../libs/Logger.js'
 
-export function calchashes(folderPath, reportNumber) {
-  Logger.write(`Start hashing`)
+export async function calchashes(folderPath, reportNumber) {
+  await Logger.write(`Start hashing`)
 
   const filesPath = path.resolve(folderPath)
   const filesPathParent = path.dirname(filesPath)
@@ -20,13 +20,15 @@ export function calchashes(folderPath, reportNumber) {
 
   const fsumHashOfFilesComannd = `${env.FSUM_PATH} -r -sha256 -d"${filesPath}" *.* > "${hashesTxtFullPathfile_}"`
 
-  Logger.write(`Calculating hashes of files:\n ${fsumHashOfFilesComannd}`)
+  await Logger.write(`Calculating hashes of files:\n ${fsumHashOfFilesComannd}`)
 
   execSync(fsumHashOfFilesComannd, { stdio: 'inherit', shell: true })
 
   const fsumHashOfHashesCommand = `${env.FSUM_PATH} -sha256 -d"${filesPathParent}" hashes.txt > ${hashOfHashesTxtFullPathFile}`
 
-  Logger.write(`Calculating hashes of hashes.txt:\n ${fsumHashOfHashesCommand}`)
+  await Logger.write(
+    `Calculating hashes of hashes.txt:\n ${fsumHashOfHashesCommand}`,
+  )
   execSync(fsumHashOfHashesCommand, { stdio: 'inherit', shell: true })
 
   fs.renameSync(

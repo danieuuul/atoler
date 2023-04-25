@@ -1,5 +1,5 @@
 import { io } from './socket.js'
-import './websocket/index.js'
+import './socket/index.js'
 
 io.on('connection', (socket) => {
   console.log('Socket:', socket.id)

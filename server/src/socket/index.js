@@ -1,9 +1,9 @@
 import { Atoler } from '../Atoler.js'
 import { io } from '../socket.js'
 
-io.on('connect', (socket) => {
-  const atoler = new Atoler()
+const atoler = new Atoler()
 
+io.on('connect', (socket) => {
   socket.on('scanDevices', async () => {
     const ports = await atoler.scanDevices()
     socket.emit('fetchData', { ports })
@@ -15,7 +15,7 @@ io.on('connect', (socket) => {
     atoler.startDevicesImages()
   })
 
-  socket.on('startWatchDirectory', () => atoler.startWatch())
+  socket.on('startWatchDirectory', async () => await atoler.startWatch())
 
-  socket.on('stopWatchDirectory', () => atoler.stopWatch())
+  socket.on('stopWatchDirectory', async () => await atoler.stopWatch())
 })

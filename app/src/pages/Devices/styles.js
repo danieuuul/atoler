@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 
 export const MainContainer = styled.div`
   display: flex;
@@ -178,5 +178,57 @@ export const LogItem = styled.div`
     font-size: 14px;
     font-weight: bold;
     overflow-wrap: break-word;
+  }
+`
+
+const rotate = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`
+
+export const Spinner = styled.div`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 5px solid #ccc;
+  border-top-color: #007bff;
+  animation: ${rotate} 1s linear infinite;
+`
+
+export const LoadContainer = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+
+  button {
+    border: 0;
+    padding: 1rem;
+    background: #4b000f;
+    border: 1px solid black;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 300px;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    &:hover {
+      background: #800020;
+      transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    }
   }
 `

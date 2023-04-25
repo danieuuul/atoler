@@ -15,7 +15,9 @@ export class Logger {
     `./logs/ATOLER-${now.format('YYYY-MM-DD-HH-mm-ss')}`,
   )
 
-  static write(msg) {
+  static async write(msg) {
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
     const formattedDate = dayjs()
       .tz(dayjs.tz.guess())
       .format('DD/MM/YYYY - HH:mm:ss [GMT]Z')
@@ -30,5 +32,7 @@ export class Logger {
     }
     const socket = getSocketServerInstance()
     socket.emit('logMessage', logMessage)
+
+    await new Promise((resolve) => setTimeout(resolve, 500))
   }
 }

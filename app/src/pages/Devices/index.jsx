@@ -13,6 +13,8 @@ import {
   Buttons,
   LogContainer,
   LogItem,
+  LoadContainer,
+  Spinner,
 } from './styles'
 
 import { ObserverControl } from './components/ObserverControl'
@@ -32,8 +34,12 @@ export function Devices() {
     control,
   })
 
-  useEffect(() => {
+  function loadDevices() {
     socket.emit('scanDevices')
+  }
+
+  useEffect(() => {
+    loadDevices()
   }, [])
 
   useEffect(() => {
@@ -138,7 +144,7 @@ export function Devices() {
       <Buttons>
         <ObserverControl isWatching={isObserving} onToggle={handleWatch} />
         <button onClick={handleSubmit(handleStart)} disabled={isImagesStarted}>
-          INICIAR IMAGENS
+          {!isImagesStarted ? 'INICIAR IMAGENS' : 'PROCESSANDO ...'}
         </button>
       </Buttons>
       <LogContainer>
@@ -151,6 +157,10 @@ export function Devices() {
       </LogContainer>
     </MainContainer>
   ) : (
-    <div>Carregando dispositivos</div>
+    <LoadContainer>
+      <Spinner />
+      <Label>Carregando dispositivos ...</Label>
+      <button onClick={loadDevices}>Recarregar</button>
+    </LoadContainer>
   )
 }
