@@ -54,7 +54,7 @@ export async function createReportDocument({
   const ipedVersion = `v${
     execSync(whereIpedCommand)
       .toString()
-      .match(/IPED-(.+)_plugin/)[1]
+      .match(/IPED-(.+)_plugin/)[1].split("_and")[0]
   }`
   asapDictionary.IPED_VERSAO = ipedVersion
 

@@ -5,7 +5,9 @@
     "*"
   ],
   "scripts": {
-    "dev": "turbo run dev --parallel"
+    "dev": "turbo run dev --parallel",
+    "lauder": "cd server && node ./src/tasks/LAUDER/runLauder.js",
+    "hiz": "cd server && node ./src/tasks/LAUDER/hiz.js"
   },
   "author": "Daniel Guimarães Rocha",
   "license": "ISC",
